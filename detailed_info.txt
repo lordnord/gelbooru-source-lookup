@@ -3,7 +3,7 @@ Gardener's tool for gelbooru.com. It looks up for artist tag and original pixiv 
 Before you can use it you have to edit "auth.json" file.
 
 >> auth.json
-PIXIV_LOGIN and PIXIV_PASSWORD are required so you must register in pixiv.
+PIXIV_LOGIN and PIXIV_PASSWORD are required so you must register on pixiv.
 SAUCENAO_API_KEY is optional but without it you will can't search for source by image itself.
 {
 "PIXIV_LOGIN": "blablabla",
@@ -30,14 +30,12 @@ Think of tag set as a string of tags separated by space.
 Some pixiv artists have no wiki page on danbooru.
 They should be added to this file. 
 "pixiv id (number)": "gelbooru_tag", // scheme
-}
-"2290757": "tsuyomayo",
-"15351": "kappi",
-"266151": "fakemulatto"
-}
 
 Tags for new artists also should be added here.
 You can use pixiv login name as tag if it looks good.
 Also you can try to transliterate japanese name. (http://romaji.me)
 And finally you can use artist's blog name or twitter name if they exist.
+
+All insertions to .json files must be between curly braces.
+Last string before closing brace must be without trailing comma.
  
