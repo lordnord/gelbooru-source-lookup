@@ -2,20 +2,14 @@ import re
 import json
 import functools
 # 3rd party
-import requests
+import requests as _requests
 import pyperclip
+# package
+from utils import *
 
-hashmask = re.compile('[0-9a-f]{32}')
-oldstyle = re.compile('/(\d+)\.(jpg|png|gif)')
-fourthslash = re.compile('https?://[\w\.]+/\w+')
-
-def raise_parse(regexp, url, pos=0):
-    match = regexp.search(url)
-    if match:
-        return match.group(pos)
-    else:
-        raise Local('Wrong URL.')
-
+with open('proxy.json') as f:
+    requests = _requests.Session()
+    requests.proxies = json.load(f)
 with open('auth.json') as f:
     globals().update(json.load(f))
 with open('gelbooru_only.json') as f:
@@ -29,27 +23,6 @@ def replacement_table():
         replacement_table.cache = table.items()
         return table.items()
     
-def last_param(link):
-    return link.split('=').pop()
-    
-def optional_format(formatlist, kw):
-    out = []
-    for string in formatlist:
-        try:
-            x = string.format(**kw)
-        except KeyError:
-            continue
-        out.append(x)
-    return '\n' + '\n'.join(out)
-     
-_print_info = ('Artist tag: {tag}', 'Artist pixiv id: {id}', 'Artist pixiv login: {account}')
-info_format = functools.partial(optional_format, _print_info)
-        
-class Local(Exception):
-    pass
-    
-class BadToken(Exception):
-    pass
 
 class main:
     source = ''
@@ -126,6 +99,7 @@ class Pixiv:
         
 class Danbooru:
     domain = 'http://danbooru.donmai.us/'
+    proxies = {}
     
     def artist_search(self, url):
         r = requests.get(self.domain + 'artists.json?search[name]=' + url)
@@ -172,7 +146,7 @@ def urlhandler(url):
     if 'gelbooru.com' in url:
         if not SAUCENAO_API_KEY:
             raise Local('Saucenao API-key is not provided.')
-        hash = raise_parse(hashmask, url)
+        hash = raise_parse('hash', url)
         t = hash[0:2], hash[2:4], hash
         thumb = 'http://gelbooru.com/thumbnails//{}/{}/thumbnail_{}.jpg'.format(*t)
         urlout = PREFIX + pic2member(thumb)
@@ -182,7 +156,7 @@ def urlhandler(url):
             artist_info = pixiv.illust2member(last_param(url))
             if translate_tags: translate()
         elif 'img' in url:
-            x = raise_parse(oldstyle, url, pos=1)
+            x = raise_parse('pixiv_old', url, pos=1)
             artist_info = pixiv.illust2member(x)
             if translate_tags: translate()
         else:
@@ -191,7 +165,7 @@ def urlhandler(url):
         urlout = PREFIX + str(artist_info['id'])
             
     elif 'twitter.com' in url or 'geocities.jp' in url:
-        urlout = raise_parse(fourthslash, url)
+        urlout = raise_parse('username', url)
     else:
         raise Local('Wrong URL.')
         
@@ -317,7 +291,7 @@ def run():
     except TypeError as err:
         print err # debug
         print 'There is no text in clipboard.'
-    except requests.exceptions.ConnectionError:
+    except _requests.exceptions.ConnectionError:
         print 'Unable to connect.'
     else:
         print info_format(artist)
