@@ -1,4 +1,3 @@
-import sys
 import re
 import traceback
 import functools
@@ -13,10 +12,11 @@ _regexps = {
 'hash': re.compile('[0-9a-f]{32}'),
 'pixiv_old':  re.compile('/(\d+)\.(jpg|png|gif)'),
 'username': re.compile('https?://[\w\.]+/\w+'),
+'illust': re.compile('illust_id=(\d+)'),
 }
 
-def raise_parse(re_code, url, pos=0):
-    match = _regexps[re_code].search(url)
+def raise_parse(scheme, url, pos=0):
+    match = _regexps[scheme].search(url)
     if match:
         return match.group(pos)
     else:
@@ -37,15 +37,15 @@ def _optional_format(pattern, kw):
     return '\n' + '\n'.join(out)
      
 _print_info = """Artist tag: {tag}
-Artist pixiv id: {id}
-Artist pixiv login: {account}"""
+Pixiv id: {id}
+Pixiv login: {account}
+Twitter username: {twitter}"""
 info_format = functools.partial(_optional_format, _print_info)
 
-def _custom(*data):
+def save_traceback(*data):
+    'Custom callback for unhandled exceptions'
     with open('last_traceback.txt', 'w') as f:
         traceback.print_exception(*data, file=f)
         traceback.print_exception(*data)
     print 'Exception occured. Shutting down.'
-    
-sys.excepthook = _custom
 
