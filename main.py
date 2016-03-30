@@ -106,7 +106,15 @@ class Pixiv:
        
     def user_info(self, author_id):
         url = 'https://public-api.secure.pixiv.net/v1/users/{}.json'.format(author_id)
-        r = requests.get(url, headers=self.header, params={'include_contacts': 1})
+        params = {
+			'profile_image_sizes': 'px_170x170,px_50x50',
+			'image_sizes': 'px_128x128,small,medium,large,px_480mw',
+			'include_stats': 1,
+			'include_profile': 1,
+			'include_workspace': 1,
+			'include_contacts': 1,
+		}
+        r = requests.get(url, headers=self.header, params=params)
         return r.json()
         
     def getmember(self, illust_id):
@@ -328,7 +336,8 @@ class App:
             print 'Pixiv re-auth completed.'
             self.run()
         except TypeError as err:
-            #print err # debug
+            print err # 
+            raise
             print 'There is no text in clipboard.'
         except _requests.exceptions.ConnectionError as err:
             #print err # debug
