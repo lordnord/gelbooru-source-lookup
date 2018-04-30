@@ -47,17 +47,6 @@ case you should close program before edit)
 You can use pixiv account name or twitter username as tag if it looks good.
 Also you can try to transliterate japanese artist name. (http://romaji.me)
 
-==| proxy.json            |==
-
-https is for pixiv
-http is for saucenao and danbooru
-To connect without proxy leave the file as is. Do not delete it.
-
-example of use
-{
-"http": "",                         // danbooru and saucenao aren't proxified
-"https": "https://159.8.54.34:3128" // pixiv is
-}
 
 Examples of valid links:
 
