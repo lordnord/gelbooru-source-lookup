@@ -17,7 +17,7 @@ class GelbooruArtists(object):
     def add(self, id, tag):
         artist_exist = self.artists.get(str(id))
         if artist_exist:
-            print 'You trying to add artist which already in database.'
+            print 'You are trying to add an artist which is already in a database.'
             print id, ':', artist_exist
             return
         self.artists[str(id)] = tag
@@ -77,8 +77,6 @@ class Pixiv:
 
         r = requests.post(url, headers=headers, data=data)
         self.access_token = r.json()['response']['access_token']
-        self.session = r.headers.get('Set-Cookie').split(';')[0]
-        
         
     @property
     def header(self):
@@ -87,7 +85,6 @@ class Pixiv:
             'User-Agent': 'PixivIOSApp/5.6.0',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer %s' % self.access_token,
-            'Cookie': self.session,
         }
         return h
         
